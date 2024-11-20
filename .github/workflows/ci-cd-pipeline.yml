@@ -1,0 +1,45 @@
+name: CI/CD Pipeline
+
+# Trigger workflow on push and pull request events
+on:
+  push:
+    branches:
+      - main  # Trigger only for pushes to the main branch
+  pull_request:
+    branches:
+      - main  # Trigger only for pull requests targeting the main branch
+
+# Define the jobs to be run
+jobs:
+  # The "build" job
+  build:
+    runs-on: ubuntu-latest  # Define the runner for this job
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # Check out the repository code
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  # Define the version of Node.js to use
+
+    - name: Install dependencies
+      run: npm install  # Install dependencies for the project
+
+    - name: Run tests
+      run: npm test  # Run tests for the project
+
+  # The "deploy" job
+  deploy:
+    runs-on: ubuntu-latest  # Define the runner for this job
+    needs: build  # This job will only run after the "build" job is complete
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to Production
+      run: |
+        echo "Deploying to production..."
+        # Add your deployment commands here, e.g., using FTP, SSH, or cloud-specific actions
